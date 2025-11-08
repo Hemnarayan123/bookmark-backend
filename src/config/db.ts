@@ -4,20 +4,21 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let pool: Pool;
-console.log("Debug ENV MYSQL_URL:", process.env.MYSQL_URL ? "Exists ✅" : "Missing ❌");
+
+const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+
+console.log("Debug ENV MYSQL_URL:", mysqlUrl ? "Exists ✅" : "Missing ❌");
 
 try {
-  if (process.env.MYSQL_URL) {
-    // ✅ Railway Environment
+  if (mysqlUrl) {
     console.log("🌐 Connecting to Railway MySQL...");
     pool = mysql.createPool({
-      uri: process.env.MYSQL_URL,
+      uri: mysqlUrl,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
     });
   } else {
-    // ✅ Local Environment
     console.log("💻 Connecting to Local MySQL...");
     pool = mysql.createPool({
       host: process.env.DB_HOST || "localhost",
@@ -31,7 +32,7 @@ try {
     });
   }
 
-  // Optional: Test connection
+  // Test connection
   (async () => {
     const connection = await pool.getConnection();
     console.log("✅ MySQL Database connected successfully");
@@ -41,6 +42,5 @@ try {
   console.error("❌ Database connection failed:", error);
   process.exit(1);
 }
-
 
 export default pool;
