@@ -1,13 +1,17 @@
 import mysql, { Pool } from "mysql2/promise";
 import dotenv from "dotenv";
 
-dotenv.config();
+// Only load .env in development
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 let pool: Pool;
 
 const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
 
 console.log("Debug ENV MYSQL_URL:", mysqlUrl ? "Exists ✅" : "Missing ❌");
+console.log("NODE_ENV:", process.env.NODE_ENV);
 
 try {
   if (mysqlUrl) {
@@ -34,9 +38,14 @@ try {
 
   // Test connection
   (async () => {
-    const connection = await pool.getConnection();
-    console.log("✅ MySQL Database connected successfully");
-    connection.release();
+    try {
+      const connection = await pool.getConnection();
+      console.log("✅ MySQL Database connected successfully");
+      connection.release();
+    } catch (error) {
+      console.error("❌ Database connection failed:", error);
+      process.exit(1);
+    }
   })();
 } catch (error) {
   console.error("❌ Database connection failed:", error);
