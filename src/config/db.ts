@@ -15,9 +15,21 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 
 try {
   if (mysqlUrl) {
-    console.log("🌐 Connecting to Railway MySQL...");
+    console.log("🌐 Connecting to Railway MySQL via URL...");
     pool = mysql.createPool({
       uri: mysqlUrl,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+  } else if (process.env.MYSQLHOST) {
+    console.log("🌐 Connecting to Railway MySQL via individual vars...");
+    pool = mysql.createPool({
+      host: process.env.MYSQLHOST,
+      user: process.env.MYSQLUSER,
+      password: process.env.MYSQLPASSWORD,
+      database: process.env.MYSQLDATABASE,
+      port: parseInt(process.env.MYSQLPORT || "3306"),
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
