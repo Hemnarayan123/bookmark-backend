@@ -1,75 +1,43 @@
 import mysql, { Pool } from "mysql2/promise";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
-// Only load .env in development
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config();
-}
+dotenv.config();
 
 let pool: Pool;
 
-// Try public URL first for debugging, then private URL
-const mysqlUrl = process.env.MYSQL_PUBLIC_URL || process.env.MYSQL_URL || process.env.DATABASE_URL;
-
-console.log("Debug ENV MYSQL_URL:", mysqlUrl ? "Exists ✅" : "Missing ❌");
-console.log("Using URL type:", process.env.MYSQL_PUBLIC_URL ? "PUBLIC" : "PRIVATE");
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("Available MySQL vars:", {
-  MYSQL_URL: !!process.env.MYSQL_URL,
-  MYSQLHOST: process.env.MYSQLHOST || "Missing",
-  MYSQLUSER: !!process.env.MYSQLUSER,
-  MYSQLDATABASE: !!process.env.MYSQLDATABASE,
-  MYSQLPORT: process.env.MYSQLPORT || "Missing"
-});
-
 try {
-  if (mysqlUrl) {
-    console.log("🌐 Connecting to Railway MySQL via URL...");
+  if (process.env.MYSQL_URL) {
+    // ✅ Running on Railway — use provided full connection URL
+    console.log('🌐 Connecting to Railway MySQL...');
     pool = mysql.createPool({
-      uri: mysqlUrl,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-    });
-  } else if (process.env.MYSQLHOST) {
-    console.log("🌐 Connecting to Railway MySQL via individual vars...");
-    pool = mysql.createPool({
-      host: process.env.MYSQLHOST,
-      user: process.env.MYSQLUSER,
-      password: process.env.MYSQLPASSWORD,
-      database: process.env.MYSQLDATABASE,
-      port: parseInt(process.env.MYSQLPORT || "3306"),
+      uri: process.env.MYSQL_URL,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
     });
   } else {
-    console.log("💻 Connecting to Local MySQL...");
+    // ✅ Local environment
+    console.log('💻 Connecting to local MySQL...');
     pool = mysql.createPool({
-      host: process.env.DB_HOST || "localhost",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASSWORD || "",
-      database: process.env.DB_NAME || "bookmark_manager",
-      port: parseInt(process.env.DB_PORT || "3306"),
+      host: process.env.DB_HOST || 'localhost',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'bookmark_manager',
+      port: parseInt(process.env.DB_PORT || '3306'),
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
     });
   }
 
-  // Test connection
+  // Test connection immediately
   (async () => {
-    try {
-      const connection = await pool.getConnection();
-      console.log("✅ MySQL Database connected successfully");
-      connection.release();
-    } catch (error) {
-      console.error("❌ Database connection failed:", error);
-      process.exit(1);
-    }
+    const connection = await pool.getConnection();
+    console.log('✅ MySQL Database connected successfully');
+    connection.release();
   })();
 } catch (error) {
-  console.error("❌ Database connection failed:", error);
+  console.error('❌ Database connection failed:', error);
   process.exit(1);
 }
 
