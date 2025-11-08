@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let pool: Pool;
+console.log("Debug ENV MYSQL_URL:", process.env.MYSQL_URL ? "Exists ✅" : "Missing ❌");
 
 try {
   if (process.env.MYSQL_URL) {
