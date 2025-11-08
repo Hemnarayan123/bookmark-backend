@@ -8,10 +8,19 @@ if (process.env.NODE_ENV !== "production") {
 
 let pool: Pool;
 
-const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+// Try public URL first for debugging, then private URL
+const mysqlUrl = process.env.MYSQL_PUBLIC_URL || process.env.MYSQL_URL || process.env.DATABASE_URL;
 
 console.log("Debug ENV MYSQL_URL:", mysqlUrl ? "Exists ✅" : "Missing ❌");
+console.log("Using URL type:", process.env.MYSQL_PUBLIC_URL ? "PUBLIC" : "PRIVATE");
 console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("Available MySQL vars:", {
+  MYSQL_URL: !!process.env.MYSQL_URL,
+  MYSQLHOST: process.env.MYSQLHOST || "Missing",
+  MYSQLUSER: !!process.env.MYSQLUSER,
+  MYSQLDATABASE: !!process.env.MYSQLDATABASE,
+  MYSQLPORT: process.env.MYSQLPORT || "Missing"
+});
 
 try {
   if (mysqlUrl) {
