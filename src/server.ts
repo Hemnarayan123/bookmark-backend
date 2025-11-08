@@ -1,7 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { testConnection } from "./config/db";
 import { errorHandler } from "./middleware/errorHandler";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -49,21 +48,9 @@ app.use("/api/public", publicRoutes);
 // Error handler (must be last)
 app.use(errorHandler);
 
-// Start server
-const startServer = async () => {
-  try {
-    // Test database connection
-    await testConnection();
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
-      console.log(`🔐 Multi-user authentication enabled`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
+// ✅ Start the server directly (DB test happens in db.ts automatically)
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
+  console.log(`🔐 Multi-user authentication enabled`);
+});
