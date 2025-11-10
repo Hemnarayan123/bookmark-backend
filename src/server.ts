@@ -48,9 +48,13 @@ app.use("/api/public", publicRoutes);
 // Error handler (must be last)
 app.use(errorHandler);
 
-// ✅ Start the server directly (DB test happens in db.ts automatically)
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`🔐 Multi-user authentication enabled`);
-});
+// ✅ Export app for Vercel
+export default app;
+
+// ✅ Local-only listener
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+}
