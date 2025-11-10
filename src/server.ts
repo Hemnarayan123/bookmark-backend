@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/errorHandler";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -13,48 +14,46 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ✅ CORS setup for both local & Vercel
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: [
+      process.env.CORS_ORIGIN || "http://localhost:5173",
+      "https://smart-bookmark.vercel.app",
+      "https://your-frontend-app.vercel.app" // add your real frontend domain
+    ],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-// Routes
+// ✅ Health check route (root)
 app.get("/", (req: Request, res: Response) => {
   res.json({
     success: true,
-    message: "Smart Bookmark Manager API - Multi-User",
+    message: "🚀 Smart Bookmark Manager API is live on Vercel!",
     version: "2.0.0",
-    endpoints: {
-      auth: "/api/auth",
-      users: "/api/users",
-      bookmarks: "/api/bookmarks",
-      tags: "/api/tags",
-      public: "/api/public",
-    },
   });
 });
 
+// ✅ Register all API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/public", publicRoutes);
 
-// Error handler (must be last)
+// ✅ Global error handler (must be last)
 app.use(errorHandler);
 
-// ✅ Export app for Vercel
+// ✅ Export for Vercel (critical!)
 export default app;
 
-// ✅ Local-only listener
+// ✅ Local-only server start
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`💻 Server running locally on http://localhost:${PORT}`);
   });
 }
