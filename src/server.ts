@@ -49,7 +49,7 @@ app.use("/api/public", publicRoutes);
 app.use(errorHandler);
 
 // ✅ Export for Vercel (critical!)
-export default app;
+export {app}
 
 // ✅ Local-only server start
 if (process.env.NODE_ENV !== "production") {
