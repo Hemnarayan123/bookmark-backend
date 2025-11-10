@@ -2,18 +2,12 @@
   "name": "bookmark-manager-backend",
   "version": "1.0.0",
   "description": "Smart Bookmark Manager Backend API",
-  "main": "dist/server.ts",
+  "main": "src/server.ts",
   "scripts": {
-     "dev": "node server.ts",
-    "start": "node server.ts"
+    "dev": "ts-node src/server.ts",
+    "start": "node src/server.js",
+    "build": "tsc"
   },
-  "keywords": [
-    "bookmarks",
-    "api",
-    "nodejs"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "axios": "^1.6.2",
     "bcryptjs": "^3.0.3",

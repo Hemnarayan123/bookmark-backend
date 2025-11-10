@@ -1,10 +1,16 @@
-{ 
-    "version": 2, 
-    "name": "Smart Bookmark", 
-    "builds": [ 
-      { "src": "server.ts", "use": "@vercel/node" } 
-    ], 
-    "routes": [ 
-      { "src": "/(.*)", "dest": "/server.ts" } 
-    ] 
-  }
+{
+  "version": 2,
+  "name": "smart-bookmark",
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
+  ]
+}
